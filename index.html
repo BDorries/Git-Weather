@@ -12,17 +12,16 @@
 alert for severe weather
 drag marker
 link to "more info" site specific to current marker loc
-ocean weather
-get user location for starting marker
-    use default of Uncertain, Texas
-    "All right then, keep your secrets"
-    32.71,-94.121944-->
+ocean weather-->
 
-<div id="map"></div>
-<h1>Git Weather</h1>
-<div id="results"></div>
+    <img id="secrets" src="img/keepSecrets.jpeg" alt="All right then, keep your secrets" style="display: none">
+    <div id="map"></div>
+    <h1>Git Weather</h1>
+    <div id="results"></div>
 
     <script src='https://api.mapbox.com/mapbox-gl-js/v2.12.0/mapbox-gl.js'></script>
+    <script src="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-geocoder/v5.0.0/mapbox-gl-geocoder.min.js"></script>
+    <link rel="stylesheet" href="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-geocoder/v5.0.0/mapbox-gl-geocoder.css" type="text/css">
     <script src="js/mapbox-geocoder-utils.js"></script>
     <script src="https://code.jquery.com/jquery-3.6.3.js" integrity="sha256-nQLuAZGRRcILA+6dMBOvcRh5Pe310sBpanc6+QBmyVM=" crossorigin="anonymous"></script>
     <script src="js/keys.js"></script>

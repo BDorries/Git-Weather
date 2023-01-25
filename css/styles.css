@@ -32,4 +32,24 @@ h1, h3{
     text-align: center;
     color: var(--cp-gold)
 }
+#secrets{
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 100px;
+    margin-left: auto;
+    margin-right: auto;
+    width: 400px;
+    z-index: 99;
+}
+p {
+    margin: 5px;
+}
+input .mapboxgl-ctrl{
+    display: none;
+    z-index: 99;
+    position: absolute;
+    left: 0;
+    right: 0;
+}
 

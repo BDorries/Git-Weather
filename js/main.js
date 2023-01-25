@@ -1,34 +1,33 @@
 
+let lat = 32.712088;
+let lng = -94.121297;
 
-let address = "uncertain, texas";
+let coords = {lng, lat}
 
-fiveDay(address);
+fiveDay(coords);
 
-function fiveDay(address){
-
-    $.get("http://api.openweathermap.org/data/2.5/forecast", {
+function fiveDay(coords) {
+    $.get("https://api.openweathermap.org/data/2.5/forecast", {
         APPID: OPENWEATHER_API_KEY,
-        q: address,
-        units: "metric"
+        lat: coords.lat,
+        lon: coords.lng,
+        units: "imperial"
     })
-    .done(function(data) {
-        console.log(data);
-        $('#results').html(makeHTML(data))
-    })
-    .fail(function(data){
-        console.log('You broke it')
-    })
-    .always(function(data){
-        console.log('always')
-    });
+        .done(function (data) {
+            $('#results').html(makeHTML(data))
+        })
+        .fail(function () {
+            console.log('You broke it')
+        })
+        .always(function () {
+        });
 }
-
 function makeHTML(data){
-    let html = `<h3>${data.city.name}, ${data.city.country}</h3>`
+    let html = `<h3>Weather for the city of ${data.city.name}</h3>`
     html += `<div id="resultData">`;
     let daySubStr = '';
     let monthSubStr = '';
-    let yearSubStr = "";
+    let yearSubStr = '';
     let dateStr = '';
 
     for (let i = 0; i < data.list.length; i += 8) {
@@ -39,16 +38,34 @@ function makeHTML(data){
         html += `<div data-id="data${i}" class="data-card">`
         html += `<img src="http://openweathermap.org/img/w/${data.list[i].weather[0].icon}.png">`
         html += `<p>${monthSubStr}/${daySubStr}/${yearSubStr}</p>`;
-        html += `<p>${data.list[i].main.temp_min} / ${data.list[i].main.temp_max}&#8451;</p>`;
+        html += `<p>${getDaysOfWeek(data.list[i].dt)}</p>`;
+        html += `<p>${data.list[i].main.temp_min} / ${data.list[i].main.temp_max} &#8451;</p>`;
+        html += `<p>Humidity: ${data.list[i].main.humidity}%</p>`;
+        html += `<p>Wind: ${data.list[i].wind.speed} km/h ${(getWindDirection(data.list[i].wind.deg))}</p>`
         html += `</div>`
     }
     html += `</div>`
     return html;
 }
 
-let defaultAddress = geocode(address, MAPBOX_API_KEY).then(result => {
-    return result
-});
+function getWindDirection (deg){
+    switch(true){
+        case (deg < 90) :
+            return 'NE';
+            break;
+        case (deg < 180) :
+            return 'SE';
+            break;
+        case (deg < 270) :
+            return 'SW';
+            break;
+        case (deg < 360) :
+            return 'NW';
+            break;
+        default :
+            return 'unknown';
+    }
+}
 
 mapboxgl.accessToken = MAPBOX_API_KEY;
 var map = new mapboxgl.Map({
@@ -58,9 +75,97 @@ var map = new mapboxgl.Map({
     center: [-94.121297, 32.712088]
 });
 
-let marker = new mapboxgl.Marker()
+let marker = new mapboxgl.Marker({
+    draggable: true
+})
     .setLngLat([-94.121297, 32.712088])
     .addTo(map);
 
+let mapBoxGeocoder = undefined;
+
+mapBoxGeocoder = new MapboxGeocoder({
+    accessToken: mapboxgl.accessToken,
+    mapboxgl: mapboxgl,
+    flyTo: false,
+    marker: false
+})
+
+map.addControl(mapBoxGeocoder)
+
+mapBoxGeocoder.on('result', function(result){
+    coords.lng = result.result.center[0]
+    coords.lat = result.result.center[1]
+    updateSearch(coords)
+    fiveDay(coords)
+});
+
+//result.result.center, true, result.name
+
+function getDaysOfWeek(unixTimestamp){
+
+const d = new Date(unixTimestamp*1000);
+let day = d.getDay();
+switch(day){
+    case 0 :
+        return 'Sun';
+        break;
+    case 1 :
+        return 'Mon';
+        break;
+    case 2 :
+        return 'Tues';
+        break;
+    case 3 :
+        return 'Wed';
+        break;
+    case 4 :
+        return 'Thur';
+        break;
+    case 5 :
+        return 'Fri';
+        break;
+    case 6 :
+        return 'Sat';
+        break;
+    default :
+        return 'Error';
+    }
+}
+
 map.addControl(new mapboxgl.NavigationControl());
 
+navigator.geolocation.getCurrentPosition(function(position){
+    update(position)
+        },
+    function(){
+        $('#secrets').css('display', 'block')
+        setTimeout(function(){
+            $('#secrets').css('display', 'none')
+        }, 5000);
+    });
+
+marker.on("dragend", function(){
+    let newPos = marker.getLngLat()
+    updateSearch(newPos);
+    fiveDay(newPos);
+})
+
+function update(position){
+    let lat = position.coords.latitude;
+    let lng = position.coords.longitude;
+    coords = {lng, lat}
+    marker.setLngLat(coords);
+    map.flyTo({
+        center: [lng,lat]
+    });
+}
+
+function updateSearch(position){
+    let lat = position.lat;
+    let lng = position.lng;
+    coords = {lng, lat}
+    marker.setLngLat(position);
+    map.flyTo({
+        center: [lng,lat]
+    });
+}
