@@ -76,10 +76,12 @@ var map = new mapboxgl.Map({
 });
 
 let marker = new mapboxgl.Marker({
+    "color" : "#fca311",
     draggable: true
 })
     .setLngLat([-94.121297, 32.712088])
-    .addTo(map);
+    .addTo(map)
+
 
 let mapBoxGeocoder = undefined;
 
@@ -135,7 +137,7 @@ switch(day){
 map.addControl(new mapboxgl.NavigationControl());
 
 navigator.geolocation.getCurrentPosition(function(position){
-    update(position)
+    update(position);
         },
     function(){
         $('#secrets').css('display', 'block')
@@ -158,6 +160,7 @@ function update(position){
     map.flyTo({
         center: [lng,lat]
     });
+    fiveDay(coords);
 }
 
 function updateSearch(position){
