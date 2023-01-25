@@ -20,7 +20,7 @@ body{
     margin-top: 20px;
 }
 .data-card{
-    border: 10px solid;
+    border: 5px solid;
     border-color: var(--cp-navy);
     border-radius: 20px;
     padding: 10px;
