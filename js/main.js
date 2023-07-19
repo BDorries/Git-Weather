@@ -7,6 +7,7 @@ let coords = {lng, lat}
 fiveDay(coords);
 
 function fiveDay(coords) {
+
     $.get("https://api.openweathermap.org/data/2.5/forecast", {
         APPID: OPENWEATHER_API_KEY,
         lat: coords.lat,
@@ -23,12 +24,13 @@ function fiveDay(coords) {
         });
 }
 function makeHTML(data){
-    let html = `<h3>Weather for the city of ${data.city.name}</h3>`
+    let html = `<h3>Weather for ${data.city.name}</h3>`
     html += `<div id="resultData">`;
     let daySubStr = '';
     let monthSubStr = '';
     let yearSubStr = '';
     let dateStr = '';
+    setWeatherImage(data.list[0].weather[0].id)
 
     for (let i = 0; i < data.list.length; i += 8) {
         dateStr = data.list[i].dt_txt;
@@ -39,7 +41,7 @@ function makeHTML(data){
         html += `<img src="http://openweathermap.org/img/w/${data.list[i].weather[0].icon}.png">`
         html += `<p>${monthSubStr}/${daySubStr}/${yearSubStr}</p>`;
         html += `<p>${getDaysOfWeek(data.list[i].dt)}</p>`;
-        html += `<p>${data.list[i].main.temp_min} / ${data.list[i].main.temp_max} &#8451;</p>`;
+        html += `<p>${data.list[i].main.temp_min} / ${data.list[i].main.temp_max} &#x2109;</p>`;
         html += `<p>Humidity: ${data.list[i].main.humidity}%</p>`;
         html += `<p>Wind: ${data.list[i].wind.speed} km/h ${(getWindDirection(data.list[i].wind.deg))}</p>`
         html += `</div>`
@@ -171,4 +173,55 @@ function updateSearch(position){
     map.flyTo({
         center: [lng,lat]
     });
+}
+function setWeatherImage(weatherId){
+    if(weatherId >= 200 && weatherId <= 232){
+        //t-storm
+        $('body')
+            .css('background-image', "linear-gradient(to bottom, rgba(0,0,0,0.3), rgba(0,0,0,0.3)), url(\"img/thunderstorm.jpeg\")")
+            .css('background-size', 'cover')
+            .css('background-repeat', 'no-repeat');
+    }
+    if(weatherId >= 300 && weatherId <= 321){
+        //drizzle
+        $('body')
+            .css('background-image', "linear-gradient(to bottom, rgba(0,0,0,0.3), rgba(0,0,0,0.3)), url(\"img/drizzle.webp\")")
+            .css('background-size', 'cover')
+            .css('background-repeat', 'no-repeat');
+    }
+    if(weatherId >= 500 && weatherId <= 531){
+        //rain
+        $('body')
+            .css('background-image', "linear-gradient(to bottom, rgba(0,0,0,0.3), rgba(0,0,0,0.3)), url(\"img/rain.jpeg\")")
+            .css('background-size', 'cover')
+            .css('background-repeat', 'no-repeat');
+    }
+    if(weatherId >= 600 && weatherId <= 621){
+        //snow
+        $('body')
+            .css('background-image', "linear-gradient(to bottom, rgba(0,0,0,0.3), rgba(0,0,0,0.3)), url(\"img/snow.jpeg\")")
+            .css('background-size', 'cover')
+            .css('background-repeat', 'no-repeat');
+    }
+    if(weatherId >= 700 && weatherId <= 781){
+        //hazy
+        $('body')
+            .css('background-image', "linear-gradient(to bottom, rgba(0,0,0,0.3), rgba(0,0,0,0.3)), url(\"img/Hazy.webp\")")
+            .css('background-size', 'cover')
+            .css('background-repeat', 'no-repeat');
+    }
+    if(weatherId === 800){
+        //clear
+        $('body')
+            .css('background-image', "linear-gradient(to bottom, rgba(0,0,0,0.3), rgba(0,0,0,0.3)), url(\"img/clear-sky.jpeg\")")
+            .css('background-size', 'cover')
+            .css('background-repeat', 'no-repeat');
+    }
+    if(weatherId > 800 && weatherId <= 804){
+        //clouds
+        $('body')
+            .css('background-image', "linear-gradient(to bottom, rgba(0,0,0,0.3), rgba(0,0,0,0.3)), url(\"img/cloudy.jpeg\")")
+            .css('background-size', 'cover')
+            .css('background-repeat', 'no-repeat')
+    }
 }

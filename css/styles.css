@@ -20,8 +20,8 @@ body{
     margin-top: 20px;
 }
 .data-card{
-    border: 5px solid;
-    border-color: var(--cp-navy);
+    border: 1px solid;
+    border-color: var(--cp-ltGrey);
     border-radius: 20px;
     padding: 10px;
     display: flex;
@@ -51,5 +51,8 @@ input .mapboxgl-ctrl{
     position: absolute;
     left: 0;
     right: 0;
+}
+li{
+
 }
 
